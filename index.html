@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Saya</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial;
+}
+
+body {
+    background: #0f172a;
+    color: white;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 50px;
+    background: rgba(0,0,0,0.5);
+    position: fixed;
+    width: 100%;
+    backdrop-filter: blur(10px);
+}
+
+.navbar h2 {
+    color: #38bdf8;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+/* HERO */
+.hero {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(270deg,#0f172a,#1e293b,#0f172a);
+    animation: bg 10s infinite;
+}
+
+@keyframes bg {
+    0% {background-position:0%}
+    50% {background-position:100%}
+    100% {background-position:0%}
+}
+
+.hero h1 {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    margin-bottom: 20px;
+}
+
+/* BUTTON */
+.btn {
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    color: white;
+    margin: 5px;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.ig {
+    background: #E1306C;
+}
+
+.wa {
+    background: #25D366;
+}
+
+.btn:hover {
+    transform: scale(1.1);
+}
+
+/* SECTION */
+.section {
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.card {
+    display: inline-block;
+    width: 250px;
+    margin: 10px;
+    padding: 20px;
+    background: #1e293b;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background: #020617;
+}
+</style>
+
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>inijemyyah</h2>
+    <div>
+        <a href="#">Home</a>
+        <a href="#about">Tentang</a>
+        <a href="#contact">Kontak</a>
+    </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <div>
+        <h1>hi,ini website saya 🚀</h1>
+        <p>Website modern dengan desain profesional</p>
+
+        <a class="btn ig" href="https://www.instagram.com/jemyyaaaaaa?igsh=cmhpbmp0dHFmaTg%3D&utm_source=qr" target="_blank">
+            Instagram
+        </a>
+
+        <a class="btn wa" href="https://wa.me/6281234567890?text=Halo%20saya%20tertarik" target="_blank">
+            WhatsApp
+        </a>
+    </div>
+</div>
+
+<!-- ABOUT -->
+<div class="section" id="about">
+    <h2>tentang Saya</h2>
+    <p>saya sedang belajar membuat website profesional.</p>
+</div>
+
+<!-- SERVICES -->
+<div class="section">
+    <h2>layanan</h2>
+
+    <div class="card">Web Development</div>
+    <div class="card">Desain UI</div>
+    <div class="card">IT Support</div>
+
+</div>
+
+<!-- CONTACT -->
+<div class="section" id="contact">
+    <h2>Kontak</h2>
+    <p>Email: jemyya@gmail.com</p>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <p>© 2026 Website Saya</p>
+</div>
+
+</body>
+</html>
