@@ -2,12 +2,12 @@
 <html lang="id">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>absensi ke jemy dulu bos</title>
+<title>absen dulu dong</title>
 
 <style>
 body {
     font-family: Arial;
-    background: linear-gradient(135deg, #1d2b64, #f8cdda);
+    background: linear-gradient(135deg, #667eea, #764ba2);
     text-align: center;
     color: white;
     padding: 20px;
@@ -27,17 +27,18 @@ input, select, textarea {
     width: 90%;
     border-radius: 10px;
     border: none;
-    margin-top: 8px;
+    margin-top: 10px;
 }
 
 button {
     padding: 12px;
     width: 100%;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-top: 10px;
     background: #00c6ff;
     color: white;
     font-weight: bold;
+    font-size: 16px;
 }
 
 video {
@@ -56,19 +57,20 @@ img {
 
 <body>
 
-<h2> absensi ke jemy dulu bos</h2>
+<h2>absen dulu dong</h2>
 
 <div class="card">
 
 <input type="text" id="nama" placeholder="Masukkan Nama">
 
-<select id="status" onchange="cekStatus()">
-    <option value="hadir">hadir</option>
-    <option value="izin">izin</option>
-    <option value="sakit">sakit</option>
+<select id="status">
+    <option value="hadir">Hadir 😎</option>
+    <option value="izin">Izin 📝</option>
+    <option value="sakit">Sakit 🤒</option>
 </select>
 
-<textarea id="alasan" placeholder="masukkan alasan..." style="display:none;"></textarea>
+<!-- ALASAN -->
+<textarea id="alasan" placeholder="Tulis alasan kamu disini ya boss..." style="display:none;"></textarea>
 
 <video id="video" autoplay playsinline></video>
 
@@ -78,7 +80,7 @@ img {
 
 <p id="lokasi">📍 mengambil lokasi...</p>
 
-<button onclick="kirim()">✅ Kirim</button>
+<button onclick="kirim()">🚀 Kirim Absensi</button>
 
 <p id="statusText"></p>
 
@@ -89,7 +91,7 @@ let fotoData = "";
 let latitude = "";
 let longitude = "";
 
-// Kamera
+// kamera
 navigator.mediaDevices.getUserMedia({
     video: { facingMode: "user" }
 })
@@ -106,9 +108,9 @@ navigator.geolocation.getCurrentPosition(pos => {
         "📍 " + latitude + ", " + longitude;
 });
 
-// Tampilkan alasan kalau izin/sakit
-function cekStatus() {
-    let status = document.getElementById("status").value;
+// FIX: EVENT LISTENER STATUS
+document.getElementById("status").addEventListener("change", function() {
+    let status = this.value;
     let alasan = document.getElementById("alasan");
 
     if (status === "Izin" || status === "Sakit") {
@@ -116,9 +118,9 @@ function cekStatus() {
     } else {
         alasan.style.display = "none";
     }
-}
+});
 
-// ambil foto (normal)
+// ambil foto (hasil normal)
 function ambilFoto() {
     let canvas = document.createElement("canvas");
     let video = document.getElementById("video");
@@ -137,19 +139,19 @@ function ambilFoto() {
     document.getElementById("preview").src = fotoData;
 }
 
-// Kirim data
+// Kirim
 function kirim() {
     let nama = document.getElementById("nama").value;
     let status = document.getElementById("status").value;
     let alasan = document.getElementById("alasan").value;
 
     if (!nama) {
-        alert("Isi nama!");
+        alert("nama dulu dong 😅");
         return;
     }
 
     if (!fotoData) {
-        alert("Ambil foto dulu!");
+        alert("foto dulu dong 📸");
         return;
     }
 
@@ -167,7 +169,8 @@ function kirim() {
     })
     .then(res => res.text())
     .then(() => {
-        document.getElementById("statusText").innerText = "✅ Data terkirim!";
+        document.getElementById("statusText").innerText =
+            "🔥 mantap absensi kamu masuk!";
     });
 }
 </script>
