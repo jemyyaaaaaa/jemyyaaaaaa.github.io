@@ -2,119 +2,109 @@
 <html lang="id">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>absensi PT.Jemuyy</title>
+<title>absensi smart pro</title>
 
 <style>
-body {
+body{
     font-family: Arial;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    text-align: center;
-    color: white;
-    padding: 20px;
+    background: linear-gradient(135deg,#0f2027,#2c5364);
+    color:white;
+    text-align:center;
+    padding:20px;
 }
 
-.card {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(15px);
-    padding: 25px;
-    border-radius: 20px;
-    max-width: 360px;
-    margin: auto;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+.card{
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    padding:25px;
+    border-radius:20px;
+    max-width:380px;
+    margin:auto;
+    box-shadow:0 15px 35px rgba(0,0,0,0.4);
 }
 
-/* jarak antar fitur */
-.section {
-    margin-top: 18px;
+.section{margin-top:20px;}
+
+input,select,textarea{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    margin-top:8px;
+    box-sizing:border-box;
 }
 
-input, select, textarea {
-    padding: 12px;
-    width: 100%;
-    border-radius: 12px;
-    border: none;
-    margin-top: 8px;
-    box-sizing: border-box;
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-weight:bold;
+    color:white;
+    margin-top:10px;
+    font-size:15px;
 }
 
-button {
-    padding: 13px;
-    width: 100%;
-    border-radius: 12px;
-    margin-top: 10px;
-    color: white;
-    font-weight: bold;
-    border: none;
-    font-size: 15px;
-}
+.btn-foto{background:#2196f3;}
+.btn-kirim{background:#00c853;}
 
-/* warna tombol */
-.btn-foto {
-    background: #00c6ff;
-}
-
-.btn-kirim {
-    background: #00e676;
-}
-
-video {
-    width: 100%;
-    border-radius: 12px;
+video{
+    width:100%;
+    border-radius:12px;
     transform: scaleX(-1);
 }
 
-img {
-    width: 100%;
-    border-radius: 12px;
-    margin-top: 10px;
+img{
+    width:100%;
+    border-radius:12px;
+    margin-top:10px;
 }
 
-#lokasi {
-    font-size: 13px;
-    opacity: 0.9;
-    margin-top: 10px;
+#statusText{
+    margin-top:15px;
+    font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<h2>absensi PT.Jemuyy</h2>
+<h2>🚀 absensi smart pro</h2>
 
 <div class="card">
 
 <div class="section">
-    <input type="text" id="nama" placeholder="masukkan nama">
+<input type="text" id="nama" placeholder="masukkan nama">
 </div>
 
 <div class="section">
-    <select id="status" onchange="cekstatus()">
-        <option value="hadir">hadir 😎</option>
-        <option value="izin">izin 📝</option>
-        <option value="sakit">sakit 🤒</option>
-    </select>
+<select id="status" onchange="cekstatus()">
+<option value="hadir">hadir 😎</option>
+<option value="izin">izin 📝</option>
+<option value="sakit">sakit 🤒</option>
+</select>
 
-    <textarea id="alasan" placeholder="alasan kamu apa boss..." style="display:none;"></textarea>
+<textarea id="alasan" placeholder="alasan kamu..." style="display:none;"></textarea>
 </div>
 
 <div class="section">
-    <video id="video" autoplay playsinline></video>
+<video id="video" autoplay playsinline></video>
 </div>
 
 <div class="section">
-    <button class="btn-foto" onclick="ambilfoto()">📸 ambil foto</button>
+<button class="btn-foto" onclick="ambilfoto()">📸 ambil foto</button>
 </div>
 
 <div class="section">
-    <img id="preview">
+<img id="preview">
 </div>
 
 <div class="section">
-    <p id="lokasi">📍 mengambil lokasi...</p>
+<p id="lokasi">📍 mengambil lokasi...</p>
 </div>
 
 <div class="section">
-    <button class="btn-kirim" onclick="kirim()">🚀 kirim absensi</button>
+<button class="btn-kirim" onclick="kirim()">🚀 kirim absensi</button>
 </div>
 
 <p id="statusText"></p>
@@ -122,90 +112,81 @@ img {
 </div>
 
 <script>
-let fotodata = "";
-let latitude = "";
-let longitude = "";
+let fotodata="";
+let latitude="";
+let longitude="";
 
 // kamera
 navigator.mediaDevices.getUserMedia({
-    video: { facingMode: "user" }
+    video:{facingMode:"user"}
 })
-.then(stream => {
-    document.getElementById("video").srcObject = stream;
+.then(stream=>{
+    document.getElementById("video").srcObject=stream;
 });
 
 // gps
-navigator.geolocation.getCurrentPosition(pos => {
-    latitude = pos.coords.latitude;
-    longitude = pos.coords.longitude;
-
-    document.getElementById("lokasi").innerText =
-        "📍 " + latitude + ", " + longitude;
+navigator.geolocation.getCurrentPosition(pos=>{
+    latitude=pos.coords.latitude;
+    longitude=pos.coords.longitude;
+    document.getElementById("lokasi").innerText=
+    "📍 "+latitude+", "+longitude;
 });
 
-// tampilkan alasan
-function cekstatus() {
-    let status = document.getElementById("status").value;
-    let alasan = document.getElementById("alasan");
-
-    if (status === "izin" || status === "sakit") {
-        alasan.style.display = "block";
-    } else {
-        alasan.style.display = "none";
-    }
+// alasan muncul
+function cekstatus(){
+    let s=document.getElementById("status").value;
+    let a=document.getElementById("alasan");
+    a.style.display=(s==="izin"||s==="sakit")?"block":"none";
 }
 
-// ambil foto (hasil normal)
-function ambilfoto() {
-    let canvas = document.createElement("canvas");
-    let video = document.getElementById("video");
-    let ctx = canvas.getContext("2d");
+// ambil foto (tidak mirror)
+function ambilfoto(){
+    let canvas=document.createElement("canvas");
+    let video=document.getElementById("video");
+    let ctx=canvas.getContext("2d");
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width=video.videoWidth;
+    canvas.height=video.videoHeight;
 
     ctx.save();
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0);
+    ctx.translate(canvas.width,0);
+    ctx.scale(-1,1);
+    ctx.drawImage(video,0,0);
     ctx.restore();
 
-    fotodata = canvas.toDataURL("image/png");
-    document.getElementById("preview").src = fotodata;
+    fotodata=canvas.toDataURL("image/png");
+    document.getElementById("preview").src=fotodata;
 }
 
-// kirim ke apps script
-function kirim() {
-    let nama = document.getElementById("nama").value;
-    let status = document.getElementById("status").value;
-    let alasan = document.getElementById("alasan").value;
+// kirim
+function kirim(){
+    let nama=document.getElementById("nama").value;
+    let status=document.getElementById("status").value;
+    let alasan=document.getElementById("alasan").value;
 
-    if (!nama) {
-        alert("nama dulu boss 😅");
-        return;
-    }
+    if(!nama) return alert("isi nama dulu");
+    if(!fotodata) return alert("ambil foto dulu");
 
-    if (!fotodata) {
-        alert("foto dulu boss 📸");
-        return;
-    }
+    document.getElementById("statusText").innerText="⏳ mengirim...";
 
-    fetch("https://script.google.com/macros/s/AKfycbwEpV-uMN6RkRWu4wKemzbTuV8STGAjM5J7L5Ng4oHT3o9QEispK7glBAR02h4f7A/exec", {
-        method: "POST",
-        body: JSON.stringify({
-            nama: nama,
-            waktu: new Date().toLocaleString(),
-            status: status,
-            alasan: alasan,
-            latitude: latitude,
-            longitude: longitude,
-            foto: fotodata
+    fetch("https://script.google.com/macros/s/AKfycbyKg_aGZ64HAXdQrHsuYGXzkWKTUX7YwBe1PJk5XZVQsE-CK3H9OykK4mIdb-kk/exec",{
+        method:"POST",
+        body:JSON.stringify({
+            nama:nama,
+            waktu:new Date().toISOString(),
+            status:status,
+            alasan:alasan,
+            latitude:latitude,
+            longitude:longitude,
+            foto:fotodata
         })
     })
-    .then(res => res.text())
-    .then(() => {
-        document.getElementById("statusText").innerText =
-            "🔥 mantap absensi masuk!";
+    .then(res=>res.json())
+    .then(()=>{
+        document.getElementById("statusText").innerText="✅ berhasil terkirim";
+    })
+    .catch(()=>{
+        document.getElementById("statusText").innerText="❌ gagal kirim";
     });
 }
 </script>
