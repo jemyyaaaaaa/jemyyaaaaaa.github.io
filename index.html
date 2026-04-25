@@ -2,36 +2,51 @@
 <html lang="id">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>absensi smart pro</title>
+<title>PT JEMUY - Absensi Smart</title>
 
 <style>
 body{
-    font-family: Arial;
-    background: linear-gradient(135deg,#0f2027,#2c5364);
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#0f0f1a,#1f3b4d);
     color:white;
-    text-align:center;
-    padding:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
 }
 
 .card{
+    width:90%;
+    max-width:420px;
     background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    padding:25px;
+    backdrop-filter: blur(18px);
     border-radius:20px;
-    max-width:380px;
-    margin:auto;
-    box-shadow:0 15px 35px rgba(0,0,0,0.4);
+    padding:25px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
 }
 
-.section{margin-top:20px;}
+h2{
+    margin-bottom:5px;
+}
+
+.subtitle{
+    font-size:13px;
+    opacity:0.8;
+    margin-bottom:20px;
+}
 
 input,select,textarea{
     width:100%;
     padding:12px;
     border-radius:12px;
     border:none;
-    margin-top:8px;
-    box-sizing:border-box;
+    margin-top:10px;
+    outline:none;
+}
+
+textarea{
+    display:none;
 }
 
 button{
@@ -40,17 +55,29 @@ button{
     border:none;
     border-radius:12px;
     font-weight:bold;
-    color:white;
+    cursor:pointer;
     margin-top:10px;
-    font-size:15px;
+    transition:0.2s;
 }
 
-.btn-foto{background:#2196f3;}
-.btn-kirim{background:#00c853;}
+button:hover{
+    transform:scale(1.02);
+}
+
+.btn-foto{
+    background:#2196f3;
+    color:white;
+}
+
+.btn-kirim{
+    background:linear-gradient(135deg,#00c853,#00e676);
+    color:white;
+}
 
 video{
     width:100%;
     border-radius:12px;
+    margin-top:10px;
     transform: scaleX(-1);
 }
 
@@ -60,54 +87,49 @@ img{
     margin-top:10px;
 }
 
-#statusText{
-    margin-top:15px;
+.status{
+    margin-top:12px;
     font-weight:bold;
+    font-size:14px;
+    text-align:center;
+}
+
+.lokasi{
+    font-size:12px;
+    opacity:0.8;
+    margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🚀 absensi smart pro</h2>
-
 <div class="card">
 
-<div class="section">
-<input type="text" id="nama" placeholder="masukkan nama">
-</div>
+<h2>🏢 PT JEMUY</h2>
+<div class="subtitle">absensi smart system</div>
 
-<div class="section">
+<input type="text" id="nama" placeholder="masukkan nama">
+
 <select id="status" onchange="cekstatus()">
-<option value="hadir">hadir 😎</option>
-<option value="izin">izin 📝</option>
-<option value="sakit">sakit 🤒</option>
+    <option value="hadir">hadir </option>
+    <option value="izin">izin 📝</option>
+    <option value="sakit">sakit 🤒</option>
 </select>
 
-<textarea id="alasan" placeholder="alasan kamu..." style="display:none;"></textarea>
-</div>
+<textarea id="alasan" placeholder="tulis alasan..."></textarea>
 
-<div class="section">
 <video id="video" autoplay playsinline></video>
-</div>
 
-<div class="section">
 <button class="btn-foto" onclick="ambilfoto()">📸 ambil foto</button>
-</div>
 
-<div class="section">
 <img id="preview">
-</div>
 
-<div class="section">
-<p id="lokasi">📍 mengambil lokasi...</p>
-</div>
+<div class="lokasi" id="lokasi">📍 mengambil lokasi...</div>
 
-<div class="section">
 <button class="btn-kirim" onclick="kirim()">🚀 kirim absensi</button>
-</div>
 
-<p id="statusText"></p>
+<div class="status" id="statusText"></div>
 
 </div>
 
@@ -117,45 +139,53 @@ let latitude="";
 let longitude="";
 
 // kamera
-navigator.mediaDevices.getUserMedia({
-    video:{facingMode:"user"}
-})
+navigator.mediaDevices.getUserMedia({ video:{facingMode:"user"} })
 .then(stream=>{
     document.getElementById("video").srcObject=stream;
 });
 
-// gps
+// lokasi
 navigator.geolocation.getCurrentPosition(pos=>{
     latitude=pos.coords.latitude;
     longitude=pos.coords.longitude;
     document.getElementById("lokasi").innerText=
-    "📍 "+latitude+", "+longitude;
+    "📍 " + latitude + ", " + longitude;
 });
 
-// alasan muncul
+// alasan show hide
 function cekstatus(){
     let s=document.getElementById("status").value;
     let a=document.getElementById("alasan");
     a.style.display=(s==="izin"||s==="sakit")?"block":"none";
 }
 
-// ambil foto (tidak mirror)
+// ambil foto
 function ambilfoto(){
-    let canvas=document.createElement("canvas");
     let video=document.getElementById("video");
+    let canvas=document.createElement("canvas");
     let ctx=canvas.getContext("2d");
 
     canvas.width=video.videoWidth;
     canvas.height=video.videoHeight;
 
-    ctx.save();
     ctx.translate(canvas.width,0);
     ctx.scale(-1,1);
     ctx.drawImage(video,0,0);
-    ctx.restore();
 
     fotodata=canvas.toDataURL("image/png");
     document.getElementById("preview").src=fotodata;
+}
+
+// cek absen 1x per hari
+function sudahAbsenHariIni(nama){
+    let today=new Date().toDateString();
+    let data=localStorage.getItem("absen_"+nama);
+    return data===today;
+}
+
+function simpanAbsen(nama){
+    let today=new Date().toDateString();
+    localStorage.setItem("absen_"+nama,today);
 }
 
 // kirim
@@ -167,9 +197,15 @@ function kirim(){
     if(!nama) return alert("isi nama dulu");
     if(!fotodata) return alert("ambil foto dulu");
 
+    // anti double absen
+    if(sudahAbsenHariIni(nama)){
+        document.getElementById("statusText").innerText="⚠️ kamu sudah absen hari ini";
+        return;
+    }
+
     document.getElementById("statusText").innerText="⏳ mengirim...";
 
-    fetch("https://script.google.com/macros/s/AKfycbyKg_aGZ64HAXdQrHsuYGXzkWKTUX7YwBe1PJk5XZVQsE-CK3H9OykK4mIdb-kk/exec",{
+    fetch("https://script.google.com/macros/s/AKfycbwEpV-uMN6RkRWu4wKemzbTuV8STGAjM5J7L5Ng4oHT3o9QEispK7glBAR02h4f7A/exec",{
         method:"POST",
         body:JSON.stringify({
             nama:nama,
@@ -183,7 +219,8 @@ function kirim(){
     })
     .then(res=>res.json())
     .then(()=>{
-        document.getElementById("statusText").innerText="✅ berhasil terkirim";
+        simpanAbsen(nama);
+        document.getElementById("statusText").innerText="✅ berhasil absen";
     })
     .catch(()=>{
         document.getElementById("statusText").innerText="❌ gagal kirim";
