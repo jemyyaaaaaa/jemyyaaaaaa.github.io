@@ -1,1 +1,92 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>absensi online</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="text-align:center; font-family:sans-serif;">
+
+<h2>absensi karyawan</h2>
+
+<input type="text" id="nama" placeholder="masukkan nama" style="padding:10px;">
+<br><br>
+
+<video id="video" width="250" autoplay></video>
+<br>
+<button onclick="ambilFoto()">ambil goto</button>
+
+<br><br>
+
+<canvas id="canvas" width="250" height="180"></canvas>
+
+<br><br>
+
+<button onclick="absen()">absen sekarang</button>
+
+<p id="status"></p>
+
+<script>
+let fotoData = "";
+
+// kamera
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+    document.getElementById("video").srcObject = stream;
+})
+.catch(() => {
+    alert("Kamera tidak diizinkan");
+});
+
+// ambil Foto
+function ambilFoto() {
+    let canvas = document.getElementById("canvas");
+    let video = document.getElementById("video");
+    let ctx = canvas.getContext("2d");
+
+    ctx.drawImage(video, 0, 0, 250, 180);
+    fotoData = canvas.toDataURL("image/png");
+}
+
+// Absen
+function absen() {
+    let nama = document.getElementById("nama").value;
+
+    if (nama === "") {
+        alert("isi nama dulu!");
+        return;
+    }
+
+    if (fotoData === "") {
+        alert("ambil foto dulu!");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(pos => {
+        let lat = pos.coords.latitude;
+        let lon = pos.coords.longitude;
+
+        fetch("https://script.google.com/macros/s/AKfycbwEpV-uMN6RkRWu4wKemzbTuV8STGAjM5J7L5Ng4oHT3o9QEispK7glBAR02h4f7A/exec", {
+            method: "POST",
+            body: JSON.stringify({
+                nama: nama,
+                waktu: new Date().toLocaleString(),
+                latitude: lat,
+                longitude: lon,
+                foto: fotoData
+            })
+        })
+        .then(res => res.text())
+        .then(() => {
+            document.getElementById("status").innerText =
+                "Absensi berhasil!";
+        });
+
+    }, () => {
+        alert("Lokasi tidak diizinkan");
+    });
+}
+</script>
+
+</body>
+</html>
