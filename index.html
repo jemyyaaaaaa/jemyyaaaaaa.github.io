@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>absen dulu dong</title>
+<title>absensi PT.jemuy</title>
 
 <style>
 body {
@@ -38,7 +38,6 @@ button {
     background: #00c6ff;
     color: white;
     font-weight: bold;
-    font-size: 16px;
 }
 
 video {
@@ -61,33 +60,32 @@ img {
 
 <div class="card">
 
-<input type="text" id="nama" placeholder="Masukkan Nama">
+<input type="text" id="nama" placeholder="masukkan nama">
 
-<select id="status">
-    <option value="hadir">Hadir 😎</option>
-    <option value="izin">Izin 📝</option>
-    <option value="sakit">Sakit 🤒</option>
+<select id="status" onchange="cekstatus()">
+    <option value="hadir">hadir 😎</option>
+    <option value="izin">izin 📝</option>
+    <option value="sakit">sakit 🤒</option>
 </select>
 
-<!-- ALASAN -->
-<textarea id="alasan" placeholder="Tulis alasan kamu disini ya boss..." style="display:none;"></textarea>
+<textarea id="alasan" placeholder="alasan kamu apa boss..." style="display:none;"></textarea>
 
 <video id="video" autoplay playsinline></video>
 
-<button onclick="ambilFoto()">📸 ambil Foto</button>
+<button onclick="ambilfoto()">📸 ambil foto</button>
 
 <img id="preview">
 
 <p id="lokasi">📍 mengambil lokasi...</p>
 
-<button onclick="kirim()">🚀 Kirim Absensi</button>
+<button onclick="kirim()">🚀 kirim absensi</button>
 
 <p id="statusText"></p>
 
 </div>
 
 <script>
-let fotoData = "";
+let fotodata = "";
 let latitude = "";
 let longitude = "";
 
@@ -99,7 +97,7 @@ navigator.mediaDevices.getUserMedia({
     document.getElementById("video").srcObject = stream;
 });
 
-// GPS
+// gps
 navigator.geolocation.getCurrentPosition(pos => {
     latitude = pos.coords.latitude;
     longitude = pos.coords.longitude;
@@ -108,20 +106,20 @@ navigator.geolocation.getCurrentPosition(pos => {
         "📍 " + latitude + ", " + longitude;
 });
 
-// FIX: EVENT LISTENER STATUS
-document.getElementById("status").addEventListener("change", function() {
-    let status = this.value;
+// tampilkan alasan
+function cekstatus() {
+    let status = document.getElementById("status").value;
     let alasan = document.getElementById("alasan");
 
-    if (status === "Izin" || status === "Sakit") {
+    if (status === "izin" || status === "sakit") {
         alasan.style.display = "block";
     } else {
         alasan.style.display = "none";
     }
-});
+}
 
 // ambil foto (hasil normal)
-function ambilFoto() {
+function ambilfoto() {
     let canvas = document.createElement("canvas");
     let video = document.getElementById("video");
     let ctx = canvas.getContext("2d");
@@ -135,23 +133,23 @@ function ambilFoto() {
     ctx.drawImage(video, 0, 0);
     ctx.restore();
 
-    fotoData = canvas.toDataURL("image/png");
-    document.getElementById("preview").src = fotoData;
+    fotodata = canvas.toDataURL("image/png");
+    document.getElementById("preview").src = fotodata;
 }
 
-// Kirim
+// kirim ke apps script
 function kirim() {
     let nama = document.getElementById("nama").value;
     let status = document.getElementById("status").value;
     let alasan = document.getElementById("alasan").value;
 
     if (!nama) {
-        alert("nama dulu dong 😅");
+        alert("nama dulu boss 😅");
         return;
     }
 
-    if (!fotoData) {
-        alert("foto dulu dong 📸");
+    if (!fotodata) {
+        alert("foto dulu boss 📸");
         return;
     }
 
@@ -164,13 +162,13 @@ function kirim() {
             alasan: alasan,
             latitude: latitude,
             longitude: longitude,
-            foto: fotoData
+            foto: fotodata
         })
     })
     .then(res => res.text())
     .then(() => {
         document.getElementById("statusText").innerText =
-            "🔥 mantap absensi kamu masuk!";
+            "🔥 mantap absensi masuk!";
     });
 }
 </script>
