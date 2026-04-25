@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PT JEMUY - Absensi Smart</title>
+<title>PT JEMUY - Smart Attendance</title>
 
 <style>
 body{
     margin:0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#0f0f1a,#1f3b4d);
+    background: linear-gradient(135deg,#0b0f1a,#1b3a4b);
     color:white;
     display:flex;
     justify-content:center;
@@ -17,36 +18,48 @@ body{
 }
 
 .card{
-    width:90%;
-    max-width:420px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(18px);
-    border-radius:20px;
+    width:92%;
+    max-width:450px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(20px);
+    border-radius:22px;
     padding:25px;
-    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
 }
 
-h2{
-    margin-bottom:5px;
+h1{
+    margin:0;
+    font-size:22px;
 }
 
 .subtitle{
-    font-size:13px;
-    opacity:0.8;
+    font-size:12px;
+    opacity:0.7;
     margin-bottom:20px;
 }
 
 input,select,textarea{
     width:100%;
     padding:12px;
-    border-radius:12px;
     border:none;
+    border-radius:12px;
     margin-top:10px;
     outline:none;
 }
 
-textarea{
-    display:none;
+textarea{display:none;}
+
+video{
+    width:100%;
+    border-radius:14px;
+    margin-top:12px;
+    transform: scaleX(-1);
+}
+
+img{
+    width:100%;
+    border-radius:14px;
+    margin-top:10px;
 }
 
 button{
@@ -54,47 +67,21 @@ button{
     padding:14px;
     border:none;
     border-radius:12px;
+    margin-top:10px;
     font-weight:bold;
     cursor:pointer;
-    margin-top:10px;
-    transition:0.2s;
 }
 
-button:hover{
-    transform:scale(1.02);
-}
-
-.btn-foto{
-    background:#2196f3;
-    color:white;
-}
-
-.btn-kirim{
-    background:linear-gradient(135deg,#00c853,#00e676);
-    color:white;
-}
-
-video{
-    width:100%;
-    border-radius:12px;
-    margin-top:10px;
-    transform: scaleX(-1);
-}
-
-img{
-    width:100%;
-    border-radius:12px;
-    margin-top:10px;
-}
+.btn1{background:#2196f3;color:white;}
+.btn2{background:linear-gradient(135deg,#00c853,#00e676);color:white;}
 
 .status{
-    margin-top:12px;
-    font-weight:bold;
-    font-size:14px;
     text-align:center;
+    margin-top:12px;
+    font-size:14px;
 }
 
-.lokasi{
+.loc{
     font-size:12px;
     opacity:0.8;
     margin-top:10px;
@@ -106,123 +93,113 @@ img{
 
 <div class="card">
 
-<h2>🏢 PT JEMUY</h2>
-<div class="subtitle">absensi smart system</div>
+<h1>🏢 PT JEMUY</h1>
+<div class="subtitle">smart attendance system</div>
 
-<input type="text" id="nama" placeholder="masukkan nama">
+<input type="text" id="nama" placeholder="nama karyawan">
 
-<select id="status" onchange="cekstatus()">
-    <option value="hadir">hadir </option>
-    <option value="izin">izin 📝</option>
-    <option value="sakit">sakit 🤒</option>
+<select id="status" onchange="cekStatus()">
+<option value="hadir">hadir 😎</option>
+<option value="izin">izin 📝</option>
+<option value="sakit">sakit 🤒</option>
 </select>
 
-<textarea id="alasan" placeholder="tulis alasan..."></textarea>
+<textarea id="alasan" placeholder="alasan..."></textarea>
 
 <video id="video" autoplay playsinline></video>
 
-<button class="btn-foto" onclick="ambilfoto()">📸 ambil foto</button>
-
+<button class="btn1" onclick="ambilFoto()">📸 ambil foto</button>
 <img id="preview">
 
-<div class="lokasi" id="lokasi">📍 mengambil lokasi...</div>
+<div class="loc" id="lokasi">📍 loading lokasi...</div>
 
-<button class="btn-kirim" onclick="kirim()">🚀 kirim absensi</button>
+<button class="btn2" onclick="kirim()">🚀 kirim absensi</button>
 
 <div class="status" id="statusText"></div>
 
 </div>
 
 <script>
-let fotodata="";
-let latitude="";
-let longitude="";
+let foto = "";
+let lat = "";
+let lng = "";
 
-// kamera
-navigator.mediaDevices.getUserMedia({ video:{facingMode:"user"} })
+const scriptURL = "https://script.google.com/macros/s/AKfycbzIsarYaXKMLsb1XSpzSBh7SsCM2nG5FqxwFFlSVjptvHd5vFIYPF6CF7qeFgU8Ag/exec";
+
+navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}})
 .then(stream=>{
-    document.getElementById("video").srcObject=stream;
+    document.getElementById("video").srcObject = stream;
 });
 
-// lokasi
 navigator.geolocation.getCurrentPosition(pos=>{
-    latitude=pos.coords.latitude;
-    longitude=pos.coords.longitude;
-    document.getElementById("lokasi").innerText=
-    "📍 " + latitude + ", " + longitude;
+    lat = pos.coords.latitude;
+    lng = pos.coords.longitude;
+    document.getElementById("lokasi").innerText =
+    "📍 " + lat + ", " + lng;
 });
 
-// alasan show hide
-function cekstatus(){
-    let s=document.getElementById("status").value;
-    let a=document.getElementById("alasan");
-    a.style.display=(s==="izin"||s==="sakit")?"block":"none";
+function cekStatus(){
+    let s = document.getElementById("status").value;
+    document.getElementById("alasan").style.display =
+    (s=="izin"||s=="sakit") ? "block":"none";
 }
 
-// ambil foto
-function ambilfoto(){
-    let video=document.getElementById("video");
-    let canvas=document.createElement("canvas");
-    let ctx=canvas.getContext("2d");
+function ambilFoto(){
+    let video = document.getElementById("video");
+    let canvas = document.createElement("canvas");
+    let ctx = canvas.getContext("2d");
 
-    canvas.width=video.videoWidth;
-    canvas.height=video.videoHeight;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
     ctx.translate(canvas.width,0);
     ctx.scale(-1,1);
     ctx.drawImage(video,0,0);
 
-    fotodata=canvas.toDataURL("image/png");
-    document.getElementById("preview").src=fotodata;
+    foto = canvas.toDataURL("image/png");
+    document.getElementById("preview").src = foto;
 }
 
-// cek absen 1x per hari
-function sudahAbsenHariIni(nama){
-    let today=new Date().toDateString();
-    let data=localStorage.getItem("absen_"+nama);
-    return data===today;
+function sudahAbsen(nama){
+    return localStorage.getItem("absen_"+nama) === new Date().toDateString();
 }
 
 function simpanAbsen(nama){
-    let today=new Date().toDateString();
-    localStorage.setItem("absen_"+nama,today);
+    localStorage.setItem("absen_"+nama,new Date().toDateString());
 }
 
-// kirim
 function kirim(){
-    let nama=document.getElementById("nama").value;
-    let status=document.getElementById("status").value;
-    let alasan=document.getElementById("alasan").value;
+    let nama = document.getElementById("nama").value;
+    let status = document.getElementById("status").value;
+    let alasan = document.getElementById("alasan").value;
 
     if(!nama) return alert("isi nama dulu");
-    if(!fotodata) return alert("ambil foto dulu");
+    if(!foto) return alert("ambil foto dulu");
 
-    // anti double absen
-    if(sudahAbsenHariIni(nama)){
-        document.getElementById("statusText").innerText="⚠️ kamu sudah absen hari ini";
+    if(sudahAbsen(nama)){
+        document.getElementById("statusText").innerText =
+        "⚠️ sudah absen hari ini";
         return;
     }
 
-    document.getElementById("statusText").innerText="⏳ mengirim...";
+    document.getElementById("statusText").innerText="mengirim...";
 
-    fetch("https://script.google.com/macros/s/AKfycbwEpV-uMN6RkRWu4wKemzbTuV8STGAjM5J7L5Ng4oHT3o9QEispK7glBAR02h4f7A/exec",{
+    fetch(scriptURL,{
         method:"POST",
         body:JSON.stringify({
-            nama:nama,
-            waktu:new Date().toISOString(),
-            status:status,
-            alasan:alasan,
-            latitude:latitude,
-            longitude:longitude,
-            foto:fotodata
+            nama,status,alasan,
+            latitude:lat,
+            longitude:lng,
+            foto:foto,
+            waktu:new Date().toISOString()
         })
     })
-    .then(res=>res.json())
-    .then(()=>{
+    .then(res=>res.text())
+    .then(res=>{
         simpanAbsen(nama);
         document.getElementById("statusText").innerText="✅ berhasil absen";
     })
-    .catch(()=>{
+    .catch(err=>{
         document.getElementById("statusText").innerText="❌ gagal kirim";
     });
 }
