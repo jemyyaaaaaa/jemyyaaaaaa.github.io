@@ -1,40 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Absensi Online</title>
+    <title>Absensi Digital</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 350px;
+            margin: auto;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        input {
+            padding: 10px;
+            width: 90%;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            margin-top: 10px;
+            background: #4facfe;
+            color: white;
+            font-weight: bold;
+        }
+
+        video, canvas {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
-<body style="text-align:center; font-family:sans-serif;">
 
-<h2>Absensi Karyawan</h2>
+<body>
 
-<input type="text" id="nama" placeholder="Masukkan Nama" style="padding:10px;">
-<br><br>
+<h2>📸 Absensi Digital</h2>
 
-<video id="video" width="250" autoplay></video>
+<div class="card">
+
+<input type="text" id="nama" placeholder="Masukkan Nama">
 <br>
+
+<video id="video" autoplay playsinline></video>
+
 <button onclick="ambilFoto()">Ambil Foto</button>
 
-<br><br>
-
-<canvas id="canvas" width="250" height="180"></canvas>
-
-<br><br>
+<canvas id="canvas"></canvas>
 
 <button onclick="absen()">Absen Sekarang</button>
 
 <p id="status"></p>
 
+</div>
+
 <script>
 let fotoData = "";
 
-// Kamera
-navigator.mediaDevices.getUserMedia({ video: true })
-.then(stream => {
-    document.getElementById("video").srcObject = stream;
+// Kamera (FIX iPhone)
+navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "user" },
+    audio: false
 })
-.catch(() => {
-    alert("Kamera tidak diizinkan");
+.then(stream => {
+    let video = document.getElementById("video");
+    video.srcObject = stream;
+    video.play();
+})
+.catch(err => {
+    alert("Kamera error: " + err);
 });
 
 // Ambil Foto
@@ -43,7 +92,10 @@ function ambilFoto() {
     let video = document.getElementById("video");
     let ctx = canvas.getContext("2d");
 
-    ctx.drawImage(video, 0, 0, 250, 180);
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.drawImage(video, 0, 0);
     fotoData = canvas.toDataURL("image/png");
 }
 
@@ -51,13 +103,13 @@ function ambilFoto() {
 function absen() {
     let nama = document.getElementById("nama").value;
 
-    if (nama === "") {
-        alert("isi nama dulu!");
+    if (!nama) {
+        alert("Isi nama dulu!");
         return;
     }
 
-    if (fotoData === "") {
-        alert("ambil foto dulu!");
+    if (!fotoData) {
+        alert("Ambil foto dulu!");
         return;
     }
 
@@ -77,8 +129,7 @@ function absen() {
         })
         .then(res => res.text())
         .then(() => {
-            document.getElementById("status").innerText =
-                "absensi berhasil terimakasih";
+            document.getElementById("status").innerText = "✅ Absensi Berhasil!";
         });
 
     }, () => {
