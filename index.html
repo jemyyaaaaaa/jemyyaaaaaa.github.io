@@ -1,41 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Absensi Digital</title>
+    <title>absensi smart</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
         body {
             font-family: Arial;
             text-align: center;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             padding: 20px;
         }
 
         .card {
-            background: white;
-            color: black;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 20px;
             max-width: 350px;
             margin: auto;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         input {
-            padding: 10px;
+            padding: 12px;
             width: 90%;
             border-radius: 10px;
-            border: 1px solid #ccc;
+            border: none;
+            margin-bottom: 10px;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 10px;
             margin-top: 10px;
-            background: #4facfe;
+            background: #00c6ff;
             color: white;
             font-weight: bold;
         }
@@ -44,26 +45,33 @@
             width: 100%;
             border-radius: 10px;
             margin-top: 10px;
+            transform: scaleX(-1); /* biar gak mirror */
+        }
+
+        .info {
+            font-size: 12px;
+            margin-top: 10px;
         }
     </style>
 </head>
 
 <body>
 
-<h2>📸 Absensi Digital</h2>
+<h2>🚀 absensi smart system</h2>
 
 <div class="card">
 
 <input type="text" id="nama" placeholder="Masukkan Nama">
-<br>
 
 <video id="video" autoplay playsinline></video>
 
-<button onclick="ambilFoto()">Ambil Foto</button>
+<button onclick="ambilFoto()">📸 Ambil Foto</button>
 
 <canvas id="canvas"></canvas>
 
-<button onclick="absen()">Absen Sekarang</button>
+<p class="info" id="lokasi">📍 Lokasi: belum diambil</p>
+
+<button onclick="absen()">✅ Absen Sekarang</button>
 
 <p id="status"></p>
 
@@ -71,8 +79,10 @@
 
 <script>
 let fotoData = "";
+let latitude = "";
+let longitude = "";
 
-// Kamera (FIX iPhone)
+// kamera (tidak mirror hasil)
 navigator.mediaDevices.getUserMedia({
     video: { facingMode: "user" },
     audio: false
@@ -83,10 +93,10 @@ navigator.mediaDevices.getUserMedia({
     video.play();
 })
 .catch(err => {
-    alert("Kamera error: " + err);
+    alert("kamera error: " + err);
 });
 
-// Ambil Foto
+// ambil Foto
 function ambilFoto() {
     let canvas = document.getElementById("canvas");
     let video = document.getElementById("video");
@@ -95,8 +105,27 @@ function ambilFoto() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
+    // BALIK LAGI AGAR NORMAL (tidak mirror hasil foto)
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+
     ctx.drawImage(video, 0, 0);
     fotoData = canvas.toDataURL("image/png");
+
+    ambilLokasi();
+}
+
+// ambil GPS
+function ambilLokasi() {
+    navigator.geolocation.getCurrentPosition(pos => {
+        latitude = pos.coords.latitude;
+        longitude = pos.coords.longitude;
+
+        document.getElementById("lokasi").innerText =
+            "📍 " + latitude + ", " + longitude;
+    }, () => {
+        alert("gagal ambil lokasi");
+    });
 }
 
 // Absen
@@ -104,36 +133,28 @@ function absen() {
     let nama = document.getElementById("nama").value;
 
     if (!nama) {
-        alert("Isi nama dulu!");
+        alert("isi nama dulu!");
         return;
     }
 
     if (!fotoData) {
-        alert("Ambil foto dulu!");
+        alert("ambil foto dulu!");
         return;
     }
 
-    navigator.geolocation.getCurrentPosition(pos => {
-        let lat = pos.coords.latitude;
-        let lon = pos.coords.longitude;
-
-        fetch("https://script.google.com/macros/s/AKfycbwEpV-uMN6RkRWu4wKemzbTuV8STGAjM5J7L5Ng4oHT3o9QEispK7glBAR02h4f7A/exec", {
-            method: "POST",
-            body: JSON.stringify({
-                nama: nama,
-                waktu: new Date().toLocaleString(),
-                latitude: lat,
-                longitude: lon,
-                foto: fotoData
-            })
+    fetch("https://script.google.com/macros/s/AKfycbwEpV-uMN6RkRWu4wKemzbTuV8STGAjM5J7L5Ng4oHT3o9QEispK7glBAR02h4f7A/exec", {
+        method: "POST",
+        body: JSON.stringify({
+            nama: nama,
+            waktu: new Date().toLocaleString(),
+            latitude: latitude,
+            longitude: longitude,
+            foto: fotoData
         })
-        .then(res => res.text())
-        .then(() => {
-            document.getElementById("status").innerText = "✅ Absensi Berhasil!";
-        });
-
-    }, () => {
-        alert("Lokasi tidak diizinkan");
+    })
+    .then(res => res.text())
+    .then(() => {
+        document.getElementById("status").innerText = "✅ Absensi berhasil!";
     });
 }
 </script>
