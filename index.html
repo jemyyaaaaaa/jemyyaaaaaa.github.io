@@ -3,113 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PT JEMUY Attendance</title>
+<title>PT JEMUY | Attendance System</title>
 
 <style>
 body{
     margin:0;
     font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top,#1c2b3a,#0b0f1a);
-    color:white;
+    background:#0b1220;
+    color:#e5e7eb;
+}
+
+/* TOP BAR */
+.topbar{
+    padding:18px 20px;
+    background:#0f172a;
+    border-bottom:1px solid rgba(255,255,255,0.05);
     display:flex;
-    justify-content:center;
+    justify-content:space-between;
     align-items:center;
-    min-height:100vh;
 }
 
-.app{
-    width:92%;
-    max-width:420px;
-}
-
-.header{
-    text-align:center;
-    margin-bottom:15px;
+.brand{
+    font-weight:600;
+    letter-spacing:1px;
 }
 
 .badge{
-    display:inline-block;
-    padding:5px 12px;
-    background:rgba(0,255,136,0.15);
-    border:1px solid rgba(0,255,136,0.3);
+    font-size:11px;
+    padding:5px 10px;
+    background:#1f2937;
     border-radius:20px;
-    font-size:12px;
-    margin-bottom:8px;
+    color:#22c55e;
 }
 
-.title{
-    font-size:22px;
-    font-weight:bold;
+/* CONTAINER */
+.container{
+    max-width:420px;
+    margin:30px auto;
+    padding:0 15px;
 }
 
+/* CARD */
 .card{
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(25px);
-    border:1px solid rgba(255,255,255,0.1);
-    border-radius:22px;
-    padding:20px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    background:#111827;
+    border:1px solid rgba(255,255,255,0.05);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
 
+/* INPUT */
 input,select,textarea{
     width:100%;
-    padding:14px;
+    padding:12px;
     margin-top:10px;
-    border:none;
-    border-radius:14px;
-    outline:none;
-    background: rgba(255,255,255,0.08);
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.1);
+    background:#0b1220;
     color:white;
+    outline:none;
 }
-
-input::placeholder{color:rgba(255,255,255,0.6);}
 
 textarea{display:none;}
 
+label{
+    font-size:12px;
+    opacity:0.7;
+}
+
+/* VIDEO */
 video{
     width:100%;
-    border-radius:16px;
-    margin-top:12px;
+    border-radius:12px;
+    margin-top:10px;
     transform: scaleX(-1);
 }
 
+/* IMAGE */
 img{
     width:100%;
-    border-radius:16px;
+    border-radius:12px;
     margin-top:10px;
 }
 
+/* BUTTON */
 .btn{
     width:100%;
-    padding:14px;
+    padding:12px;
     border:none;
-    border-radius:14px;
+    border-radius:10px;
     margin-top:10px;
-    font-weight:bold;
+    font-weight:600;
     cursor:pointer;
     transition:0.2s;
 }
 
-.btn:active{transform:scale(0.97);}
+.btn:active{transform:scale(0.98);}
 
-.btn-photo{
-    background: linear-gradient(135deg,#2196f3,#00b0ff);
+.primary{
+    background:#2563eb;
     color:white;
 }
 
-.btn-send{
-    background: linear-gradient(135deg,#00c853,#00e676);
-    color:white;
+.success{
+    background:#22c55e;
+    color:black;
 }
 
+/* STATUS */
 .status{
-    text-align:center;
     margin-top:12px;
+    text-align:center;
     font-size:13px;
-    opacity:0.9;
+    color:#9ca3af;
 }
 
-.loc{
+.location{
     font-size:12px;
     opacity:0.7;
     margin-top:8px;
@@ -120,34 +129,37 @@ img{
 
 <body>
 
-<div class="app">
-
-<div class="header">
-    <div class="badge">PT JEMUY SYSTEM</div>
-    <div class="title">Absensi Karyawan</div>
+<!-- TOP BAR -->
+<div class="topbar">
+    <div class="brand">PT JEMUY</div>
+    <div class="badge">Attendance System</div>
 </div>
+
+<div class="container">
 
 <div class="card">
 
-<input type="text" id="nama" placeholder="nama karyawan">
+<label>Nama Karyawan</label>
+<input type="text" id="nama" placeholder="Masukkan nama">
 
+<label>Status Kehadiran</label>
 <select id="status" onchange="cekStatus()">
-<option value="hadir">hadir 😎</option>
-<option value="izin">izin 📝</option>
-<option value="sakit">sakit 🤒</option>
+<option value="hadir">Hadir</option>
+<option value="izin">Izin</option>
+<option value="sakit">Sakit</option>
 </select>
 
-<textarea id="alasan" placeholder="alasan..."></textarea>
+<textarea id="alasan" placeholder="alasan"></textarea>
 
 <video id="video" autoplay playsinline></video>
 
-<button class="btn btn-photo" onclick="ambilFoto()">📸 Ambil Foto</button>
+<button class="btn primary" onclick="ambilFoto()">Ambil Foto</button>
 
 <img id="preview">
 
-<div class="loc" id="lokasi">📍 mencari lokasi...</div>
+<div class="location" id="lokasi">Mengambil lokasi...</div>
 
-<button class="btn btn-send" onclick="kirim()">🚀 Kirim Absensi</button>
+<button class="btn success" onclick="kirim()">Kirim Absensi</button>
 
 <div class="status" id="statusText"></div>
 
@@ -160,7 +172,7 @@ let foto="";
 let lat="";
 let lng="";
 
-const scriptURL="https://script.google.com/macros/s/AKfycbxSHxmCNzu5-KtzUhBKT1gQjAcmcxOsZB7gdVi_JPq1GrGPZm5gJMwJt3Fcv8IC/exec";
+const scriptURL="https://script.google.com/macros/s/AKfycbyiPATx3FJf7JyP5FEWJme2fcvl6_k3oOaqb6BalE7UMDH5VN0B05_7zPa2GLrDxA/exec";
 
 // kamera
 navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}})
@@ -172,7 +184,8 @@ navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}})
 navigator.geolocation.getCurrentPosition(pos=>{
     lat=pos.coords.latitude;
     lng=pos.coords.longitude;
-    document.getElementById("lokasi").innerText="📍 "+lat+", "+lng;
+    document.getElementById("lokasi").innerText=
+    "Lokasi: "+lat+", "+lng;
 });
 
 // alasan
@@ -206,9 +219,9 @@ function kirim(){
     let alasan=document.getElementById("alasan").value;
 
     if(!nama) return alert("isi nama");
-    if(!foto) return alert("ambil foto dulu");
+    if(!foto) return alert("ambil foto");
 
-    document.getElementById("statusText").innerText="mengirim...";
+    document.getElementById("statusText").innerText="Mengirim...";
 
     fetch(scriptURL,{
         method:"POST",
@@ -222,10 +235,10 @@ function kirim(){
     })
     .then(res=>res.text())
     .then(data=>{
-        document.getElementById("statusText").innerText="✅ berhasil absen";
+        document.getElementById("statusText").innerText="Berhasil Absen";
     })
     .catch(err=>{
-        document.getElementById("statusText").innerText="❌ gagal";
+        document.getElementById("statusText").innerText="Gagal Kirim";
     });
 }
 </script>
