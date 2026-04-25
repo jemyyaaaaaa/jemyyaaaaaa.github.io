@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PT JEMUY - Smart Attendance</title>
+<title>PT JEMUY Attendance</title>
 
 <style>
 body{
     margin:0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#0b0f1a,#1b3a4b);
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top,#1c2b3a,#0b0f1a);
     color:white;
     display:flex;
     justify-content:center;
@@ -17,84 +17,117 @@ body{
     min-height:100vh;
 }
 
-.card{
+.app{
     width:92%;
-    max-width:450px;
-    background: rgba(255,255,255,0.07);
-    backdrop-filter: blur(20px);
-    border-radius:22px;
-    padding:25px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    max-width:420px;
 }
 
-h1{
-    margin:0;
-    font-size:22px;
+.header{
+    text-align:center;
+    margin-bottom:15px;
 }
 
-.subtitle{
+.badge{
+    display:inline-block;
+    padding:5px 12px;
+    background:rgba(0,255,136,0.15);
+    border:1px solid rgba(0,255,136,0.3);
+    border-radius:20px;
     font-size:12px;
-    opacity:0.7;
-    margin-bottom:20px;
+    margin-bottom:8px;
+}
+
+.title{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.card{
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(25px);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
 }
 
 input,select,textarea{
     width:100%;
-    padding:12px;
-    border:none;
-    border-radius:12px;
+    padding:14px;
     margin-top:10px;
+    border:none;
+    border-radius:14px;
     outline:none;
+    background: rgba(255,255,255,0.08);
+    color:white;
 }
+
+input::placeholder{color:rgba(255,255,255,0.6);}
 
 textarea{display:none;}
 
 video{
     width:100%;
-    border-radius:14px;
+    border-radius:16px;
     margin-top:12px;
     transform: scaleX(-1);
 }
 
 img{
     width:100%;
-    border-radius:14px;
+    border-radius:16px;
     margin-top:10px;
 }
 
-button{
+.btn{
     width:100%;
     padding:14px;
     border:none;
-    border-radius:12px;
+    border-radius:14px;
     margin-top:10px;
     font-weight:bold;
     cursor:pointer;
+    transition:0.2s;
 }
 
-.btn1{background:#2196f3;color:white;}
-.btn2{background:linear-gradient(135deg,#00c853,#00e676);color:white;}
+.btn:active{transform:scale(0.97);}
+
+.btn-photo{
+    background: linear-gradient(135deg,#2196f3,#00b0ff);
+    color:white;
+}
+
+.btn-send{
+    background: linear-gradient(135deg,#00c853,#00e676);
+    color:white;
+}
 
 .status{
     text-align:center;
     margin-top:12px;
-    font-size:14px;
+    font-size:13px;
+    opacity:0.9;
 }
 
 .loc{
     font-size:12px;
-    opacity:0.8;
-    margin-top:10px;
+    opacity:0.7;
+    margin-top:8px;
+    text-align:center;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="app">
 
-<h1>🏢 PT JEMUY</h1>
-<div class="subtitle">smart attendance system</div>
+<div class="header">
+    <div class="badge">PT JEMUY SYSTEM</div>
+    <div class="title">Absensi Karyawan</div>
+</div>
+
+<div class="card">
 
 <input type="text" id="nama" placeholder="nama karyawan">
 
@@ -108,79 +141,72 @@ button{
 
 <video id="video" autoplay playsinline></video>
 
-<button class="btn1" onclick="ambilFoto()">📸 ambil foto</button>
+<button class="btn btn-photo" onclick="ambilFoto()">📸 Ambil Foto</button>
+
 <img id="preview">
 
-<div class="loc" id="lokasi">📍 loading lokasi...</div>
+<div class="loc" id="lokasi">📍 mencari lokasi...</div>
 
-<button class="btn2" onclick="kirim()">🚀 kirim absensi</button>
+<button class="btn btn-send" onclick="kirim()">🚀 Kirim Absensi</button>
 
 <div class="status" id="statusText"></div>
 
 </div>
 
+</div>
+
 <script>
-let foto = "";
-let lat = "";
-let lng = "";
+let foto="";
+let lat="";
+let lng="";
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbzImUgsw80qU0jnxFFm2U79pMLyU4paV8M_uG67TB23UGF1RgEIqVJt_NuFr4QJlw/exec";
+const scriptURL="https://script.google.com/macros/s/AKfycbxSHxmCNzu5-KtzUhBKT1gQjAcmcxOsZB7gdVi_JPq1GrGPZm5gJMwJt3Fcv8IC/exec";
 
+// kamera
 navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}})
 .then(stream=>{
-    document.getElementById("video").srcObject = stream;
+    document.getElementById("video").srcObject=stream;
 });
 
+// lokasi
 navigator.geolocation.getCurrentPosition(pos=>{
-    lat = pos.coords.latitude;
-    lng = pos.coords.longitude;
-    document.getElementById("lokasi").innerText =
-    "📍 " + lat + ", " + lng;
+    lat=pos.coords.latitude;
+    lng=pos.coords.longitude;
+    document.getElementById("lokasi").innerText="📍 "+lat+", "+lng;
 });
 
+// alasan
 function cekStatus(){
-    let s = document.getElementById("status").value;
-    document.getElementById("alasan").style.display =
-    (s=="izin"||s=="sakit") ? "block":"none";
+    let s=document.getElementById("status").value;
+    document.getElementById("alasan").style.display=
+    (s=="izin"||s=="sakit")?"block":"none";
 }
 
+// foto
 function ambilFoto(){
-    let video = document.getElementById("video");
-    let canvas = document.createElement("canvas");
-    let ctx = canvas.getContext("2d");
+    let v=document.getElementById("video");
+    let c=document.createElement("canvas");
+    let ctx=c.getContext("2d");
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    c.width=v.videoWidth;
+    c.height=v.videoHeight;
 
-    ctx.translate(canvas.width,0);
+    ctx.translate(c.width,0);
     ctx.scale(-1,1);
-    ctx.drawImage(video,0,0);
+    ctx.drawImage(v,0,0);
 
-    foto = canvas.toDataURL("image/png");
-    document.getElementById("preview").src = foto;
+    foto=c.toDataURL("image/png");
+    document.getElementById("preview").src=foto;
 }
 
-function sudahAbsen(nama){
-    return localStorage.getItem("absen_"+nama) === new Date().toDateString();
-}
-
-function simpanAbsen(nama){
-    localStorage.setItem("absen_"+nama,new Date().toDateString());
-}
-
+// kirim
 function kirim(){
-    let nama = document.getElementById("nama").value;
-    let status = document.getElementById("status").value;
-    let alasan = document.getElementById("alasan").value;
+    let nama=document.getElementById("nama").value;
+    let status=document.getElementById("status").value;
+    let alasan=document.getElementById("alasan").value;
 
-    if(!nama) return alert("isi nama dulu");
+    if(!nama) return alert("isi nama");
     if(!foto) return alert("ambil foto dulu");
-
-    if(sudahAbsen(nama)){
-        document.getElementById("statusText").innerText =
-        "⚠️ sudah absen hari ini";
-        return;
-    }
 
     document.getElementById("statusText").innerText="mengirim...";
 
@@ -195,12 +221,11 @@ function kirim(){
         })
     })
     .then(res=>res.text())
-    .then(res=>{
-        simpanAbsen(nama);
+    .then(data=>{
         document.getElementById("statusText").innerText="✅ berhasil absen";
     })
     .catch(err=>{
-        document.getElementById("statusText").innerText="❌ gagal kirim";
+        document.getElementById("statusText").innerText="❌ gagal";
     });
 }
 </script>
